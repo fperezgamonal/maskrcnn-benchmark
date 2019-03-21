@@ -9,12 +9,12 @@ class DatasetCatalog(object):
     DATASETS = {
         "aicity_2019_train": {
             "img_dir": "aicity/train",
-            "ann_file": "aicity/annotations/train/instances_train.json"
+            "ann_file": "aicity/annotations/instances_train.json"
             # if the annotation file does not work, try with: 'instances_train_pretty.json'
         },
         "aicity_2019_val": {
             "img_dir": "aicity/val",
-            "ann_file": "aicity/annotations/val/instances_val.json"
+            "ann_file": "aicity/annotations/instances_val.json"
             # if the annotation file does not work, try with: 'instances_val_pretty.json'
         },
         "coco_2017_train": {
