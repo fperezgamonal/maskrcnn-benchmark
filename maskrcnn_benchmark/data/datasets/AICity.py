@@ -5,17 +5,19 @@ import torchvision
 from maskrcnn_benchmark.structures.bounding_box import BoxList
 from maskrcnn_benchmark.structures.segmentation_mask import SegmentationMask
 
-from maskrcnn_benchmark.data.datasets.AICity_detection import AICityDetection
+from maskrcnn_benchmark.data.datasets.aicity_detection import AICityDetection
 
 
 class AICityDataset(AICityDetection):  # torch.utils.data.Dataset
     CLASSES = (
         "__background__ ",
-        "car"
+        "car",
     )
 
-    def __init__(self, ann_file, root, remove_images_without_annotations, transforms=None):
-        super(AICityDetection, self).__init__(root, ann_file)
+    def __init__(
+            self, ann_file, root, remove_images_without_annotations, transforms=None
+    ):
+        super(AICityDataset, self).__init__(root, ann_file)
         # sort indices for reproducible results
         self.ids = sorted(self.ids)
 
@@ -23,7 +25,7 @@ class AICityDataset(AICityDetection):  # torch.utils.data.Dataset
         if remove_images_without_annotations:
             new_ids = []
             for img_id in self.ids:
-                anns = self.AICity.loadAnns(self.AICity.getAnnIds(imgIds=img_id, iscrowd=None))
+                anns = self.aicity.loadAnns(self.aicity.getAnnIds(imgIds=img_id, iscrowd=None))
                 is_filled = True
                 for ann in anns:
                     if not ann["bbox"]:  # or not ann["segmentation"]:
@@ -34,11 +36,11 @@ class AICityDataset(AICityDetection):  # torch.utils.data.Dataset
             # self.ids = [
             #    img_id
             #    for img_id in self.ids
-            #    if len(self.AICity.getAnnIds(imgIds=img_id, iscrowd=None)) > 0
+            #    if len(self.aicity.getAnnIds(imgIds=img_id, iscrowd=None)) > 0
             # ]
 
         self.json_category_id_to_contiguous_id = {
-            v: i + 1 for i, v in enumerate(self.AICity.getCatIds())
+            v: i + 1 for i, v in enumerate(self.aicity.getCatIds())
         }
         self.contiguous_category_id_to_json_id = {
             v: k for k, v in self.json_category_id_to_contiguous_id.items()
@@ -58,6 +60,7 @@ class AICityDataset(AICityDetection):  # torch.utils.data.Dataset
         boxes = [obj["bbox"] for obj in anno]
         boxes = torch.as_tensor(boxes).reshape(-1, 4)  # guard against no boxes
         target = BoxList(boxes, img.size, mode="xywh").convert("xyxy")
+        # Maybe we could have worked directly with the annotations in xyxy (??)
 
         classes = [obj["category_id"] for obj in anno]
         classes = [self.json_category_id_to_contiguous_id[c] for c in classes]

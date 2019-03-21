@@ -3,12 +3,18 @@ from PIL import Image
 import os
 import os.path
 
-from maskrcnn_benchmark.structures.bounding_box import BoxList
 
-
-class AICity(data.Dataset):  # torch.utils.data.Dataset
+class AICityDetection(data.Dataset):  # torch.utils.data.Dataset
     """
     AICity dataset class
+
+    Args:
+        root (string): Root directory where images are downloaded to.
+        annFile (string): Path to json annotation file.
+        transform (callable, optional): A function/transform that  takes in an PIL image
+            and returns a transformed version. E.g, ``transforms.ToTensor``
+        target_transform (callable, optional): A function/transform that takes in the
+            target and transforms it.
     """
 
     def __init__(self, root, annFile, transform=None, target_transform=None):
@@ -22,6 +28,12 @@ class AICity(data.Dataset):  # torch.utils.data.Dataset
         self.target_transform = target_transform
 
     def __getitem__(self, index):
+        """
+            Args:
+            index (int): Index
+            Returns:
+            tuple: Tuple (image, target). target is the object returned by ``coco.loadAnns``.
+        """
         aicity = self.aicity
         img_id = self.ids[index]
         ann_ids = aicity.getAnnIds(imgIds=img_id)
