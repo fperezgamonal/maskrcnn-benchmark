@@ -7,6 +7,16 @@ import os
 class DatasetCatalog(object):
     DATA_DIR = "datasets"
     DATASETS = {
+        "aicity_2019_train": {
+            "img_dir": "aicity/train",
+            "ann_file": "aicity/annotations/train/instances_train.json"
+            # if the annotation file does not work, try with: 'instances_train_pretty.json'
+        },
+        "aicity_2019_val": {
+            "img_dir": "aicity/val",
+            "ann_file": "aicity/annotations/val/instances_val.json"
+            # if the annotation file does not work, try with: 'instances_val_pretty.json'
+        },
         "coco_2017_train": {
             "img_dir": "coco/train2017",
             "ann_file": "coco/annotations/instances_train2017.json"
@@ -119,6 +129,22 @@ class DatasetCatalog(object):
                 factory="COCODataset",
                 args=args,
             )
+        elif "aicity" in name:
+            data_dir = DatasetCatalog.DATA_DIR
+            # temporal "fix", convert to absolute path (I think they are storing in in a different 'datasets' folder!
+            MASKRCNN_HOME_DRIVE = '/content/drive/ColabNotebooks/maskrcnn-benchmark/maskrcnn_benchmark/data'
+            data_dir = os.path.join(MASKRCNN_HOME_DRIVE, data_dir)
+
+            attrs = DatasetCatalog.DATASETS[name]
+            args = dict(
+                root=os.path.join(data_dir, attrs["img_dir"]),
+                ann_file=os.path.join(data_dir, attrs["ann_file"]),
+            )
+            return dict(
+                factory="AICityDataset",
+                args=args,
+            )
+
         elif "voc" in name:
             data_dir = DatasetCatalog.DATA_DIR
             attrs = DatasetCatalog.DATASETS[name]

@@ -317,6 +317,16 @@ def evaluate_predictions_on_coco(
 
     # coco_dt = coco_gt.loadRes(coco_results)
     coco_eval = COCOeval(coco_gt, coco_dt, iou_type)
+    # TODO: only evaluate 'car' (idx=3) if we are working with AICity dataset
+    # The json_result_file will indeed contain the original output folder (in config) + concatenated folders
+    # We can check for 'aicity' (case insensitive to set specific params)
+    if 'aicity' in json_result_file.lower():
+        # Similarly, one can set other params (see github.com/cocodataset/cocoapi/PythonAPI/ at https://bit.ly/2OfoK65)
+        # if 'cycle' in json_result_file.lower():  # assessing all 3 classes: car, bicycle and motorcycle
+        #     coco_eval.params.catIds = [2, 3, 4]
+        # else:
+        coco_eval.params.catIds = [3]  # a single number is probably fine, otherwise 'embbed' it in a vector as [3]
+
     coco_eval.evaluate()
     coco_eval.accumulate()
     coco_eval.summarize()

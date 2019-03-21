@@ -2,6 +2,6 @@
 from .coco import COCODataset
 from .voc import PascalVOCDataset
 from .concat_dataset import ConcatDataset
-from .AICity import AICityDataset
+from .aicity import AICityDataset
 
 __all__ = ["COCODataset", "ConcatDataset", "PascalVOCDataset", "AICityDataset"]
